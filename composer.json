@@ -1,0 +1,15 @@
+{
+    "name": "ctorh23/dotenv",
+    "description": "A tool is for processing files that contain custom environment variables and making them available in an application",
+    "autoload": {
+        "psr-4": {
+            "Ctorh23\\Dotenv\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Stoyan Dimitrov"
+        }
+    ],
+    "require": {}
+}
