@@ -1,6 +1,6 @@
 {
     "name": "ctorh23/dotenv",
-    "description": "A tool is for processing files that contain custom environment variables and making them available in an application",
+    "description": "Loads environment variables from a .env file and makes them available through the $_ENV superglobal.",
     "autoload": {
         "psr-4": {
             "Ctorh23\\Dotenv\\": "src/"
