@@ -1,0 +1,8 @@
+includes:
+	- phpstan-baseline.neon
+
+parameters:
+	tmpDir: var/cache/phpstan
+	level: max
+	paths:
+		- src
