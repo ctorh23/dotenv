@@ -24,7 +24,7 @@ final class Dotenv
     private string $envDir;
 
     public function __construct(
-        private readonly string $path
+        private readonly string $path,
     ) {
         //
     }

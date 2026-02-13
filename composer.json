@@ -11,5 +11,7 @@
             "name": "Stoyan Dimitrov"
         }
     ],
-    "require": {}
+    "require": {
+        "php": "^8.3"
+    }
 }
