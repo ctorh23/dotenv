@@ -1,13 +1,7 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Property Ctorh23\\Dotenv\\Dotenv\:\:\$envDir is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: src/Dotenv.php
-
-		-
-			message: '#^Property Ctorh23\\Dotenv\\Dotenv\:\:\$envFile is never read, only written\.$#'
-			identifier: property.onlyWritten
+			message: '#^Comparison operation "\<" between 3 and 3 is always false\.$#'
+			identifier: smaller.alwaysFalse
 			count: 1
 			path: src/Dotenv.php
