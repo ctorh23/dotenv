@@ -62,4 +62,64 @@ final class DotenvTest extends TestCase
 
         $this->assertEquals($arrExpected, $vars);
     }
+
+    public function testProcessFileListDifferentVars(): void
+    {
+        $sut = new DotEnv();
+        $fileList = [
+            \FIXTURES_PATH . '/envfiles/.env-list-base',
+            \FIXTURES_PATH . '/envfiles/.env-list-different',
+        ];
+        $vars = $sut->processFileList($fileList);
+
+        $arrExpected = [
+            'DB_HOST' => 'example.host',
+            'DB_PORT' => '3306',
+            'DB_USER' => 'appdbuser',
+            'DB_PASS' => 'appdbpass',
+            'DB_NAME' => 'exampledb',
+            'DB_ENCODING' => 'utf-8',
+        ];
+
+        $this->assertEquals($arrExpected, $vars);
+    }
+
+    public function testProcessFileListOverlapVars(): void
+    {
+        $sut = new DotEnv();
+        $fileList = [
+            \FIXTURES_PATH . '/envfiles/.env-list-base',
+            \FIXTURES_PATH . '/envfiles/.env-list-overlap',
+        ];
+        $vars = $sut->processFileList($fileList);
+
+        $arrExpected = [
+            'DB_HOST' => 'example.host',
+            'DB_USER' => 'appdbuser',
+            'DB_PORT' => '5432',
+            'DB_TIMEOUT' => '5',
+            'DB_PASS' => 'appdbsecret',
+        ];
+
+        $this->assertEquals($arrExpected, $vars);
+    }
+
+    public function testWriteVarsNoOverwrite(): void
+    {
+        $_ENV['AWS_ACCESS_KEY_ID'] = 'acme';
+        $_ENV['AWS_SECRET_ACCESS_KEY'] = 'verySecretPhrase';
+
+        $vars = [
+            'AWS_SECRET_ACCESS_KEY' => 'shouldNotBeUsed',
+            'AWS_DEFAULT_REGION' => 'eu-west-1',
+
+        ];
+
+        $sut = new DotEnv();
+        $sut->writeVars($vars);
+        $this->assertArrayHasKey('AWS_DEFAULT_REGION', $_ENV);
+        $this->assertArrayHasKey('AWS_SECRET_ACCESS_KEY', $_ENV);
+        $this->assertEquals($_ENV['AWS_DEFAULT_REGION'], 'eu-west-1');
+        $this->assertEquals($_ENV['AWS_SECRET_ACCESS_KEY'], 'verySecretPhrase');
+    }
 }

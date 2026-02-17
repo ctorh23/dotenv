@@ -34,6 +34,11 @@ final class Dotenv
      */
     private string $envDir;
 
+    /**
+     * The name of variable used for defining application environment (e.g. development, test, production)
+     */
+    private string $appEnvName = 'APP_ENV';
+
     public function __construct(string $path = '')
     {
         $this->setPath($path);
@@ -63,7 +68,38 @@ final class Dotenv
     public function load(): void
     {
         $this->examinePath();
-        $files = $this->prepareFileList();
+        $vars = $this->processFileList($this->prepareFileList());
+
+        $appEnv = $this->fetchAppEnv($vars);
+        if (\strlen($appEnv)) {
+            $varsEnvSpec = $this->processFileList($this->prepareFileList($appEnv));
+            $vars = \array_merge($vars, $varsEnvSpec);
+        }
+
+        $this->writeVars($vars);
+    }
+
+    /**
+     * Passes each item of a $fileList parameter to the .env parser and merges results.
+     *
+     * @throws \Ctorh23\Dotenv\Exception\SyntaxException
+     * @throws \Ctorh23\Dotenv\Exception\PathException
+     *
+     * @param array<string> $fileList
+     *
+     * @return array<string, string>
+     */
+    public function processFileList(array $fileList): array
+    {
+        $vars = [];
+        foreach ($fileList as $fl) {
+            $fileVars = $this->processFile($fl);
+            if (\count($fileVars)) {
+                $vars = \array_merge($vars, $fileVars);
+            }
+        }
+
+        return $vars;
     }
 
     /**
@@ -81,7 +117,6 @@ final class Dotenv
         }
 
         $vars = [];
-
         $lines = \file($file, \FILE_IGNORE_NEW_LINES | \FILE_SKIP_EMPTY_LINES);
         if (\is_array($lines) && \count($lines)) {
             foreach ($lines as $ln) {
@@ -93,6 +128,22 @@ final class Dotenv
         }
 
         return $vars;
+    }
+
+    /**
+     * Sets variables from the array as environment variables.
+     *
+     * @param array<string, string> $vars
+     */
+    public function writeVars(array $vars): void
+    {
+        if (\count($vars)) {
+            foreach ($vars as $varName => $varVal) {
+                if (!isset($_ENV[$varName]) || $this->allowEnvOverwrite()) {
+                    $_ENV[$varName] = $varVal;
+                }
+            }
+        }
     }
 
     /**
@@ -139,5 +190,29 @@ final class Dotenv
         }
 
         return $fileList;
+    }
+
+    /**
+     * Defines application environment
+     *
+     * @param array<string, string> $vars
+     */
+    private function fetchAppEnv(array $vars): string
+    {
+        $appEnv = $_ENV[$this->appEnvName] ?? '';
+
+        if (($appEnv === '' || $this->allowEnvOverwrite()) && isset($vars[$this->appEnvName])) {
+            $appEnv = $vars[$this->appEnvName];
+        }
+
+        return \strval($appEnv);
+    }
+
+    /**
+     * Check if it is allowed to overwrite external envritonment variables.
+     */
+    private function allowEnvOverwrite(): bool
+    {
+        return false;
     }
 }
