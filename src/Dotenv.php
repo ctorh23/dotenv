@@ -118,7 +118,7 @@ final class Dotenv
 
         $vars = [];
         $lines = \file($file, \FILE_IGNORE_NEW_LINES | \FILE_SKIP_EMPTY_LINES);
-        if (\is_array($lines) && \count($lines)) {
+        if (\is_array($lines)) {
             foreach ($lines as $ln) {
                 if (!\preg_match(self::VAR_PATTERN, $ln, $matches) || \count($matches) < 3) {
                     throw SyntaxException::incorrectVarDefinition($ln);
@@ -137,11 +137,9 @@ final class Dotenv
      */
     public function writeVars(array $vars): void
     {
-        if (\count($vars)) {
-            foreach ($vars as $varName => $varVal) {
-                if (!isset($_ENV[$varName]) || $this->allowEnvOverwrite()) {
-                    $_ENV[$varName] = $varVal;
-                }
+        foreach ($vars as $varName => $varVal) {
+            if (!isset($_ENV[$varName]) || $this->allowEnvOverwrite()) {
+                $_ENV[$varName] = $varVal;
             }
         }
     }
