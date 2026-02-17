@@ -39,17 +39,22 @@ final class Dotenv
      */
     private string $appEnvName = 'APP_ENV';
 
+    /**
+     * A flag used to disable/enable overwriting of existing (externally-defined) environment variables.
+     */
+    private bool $overwrite = false;
+
     public function __construct(string $path = '')
     {
         $this->setPath($path);
     }
 
     /**
-     * A setter. The path can be set only once.
+     * A setter method. The path can be set only once.
      *
      * @throws \Ctorh23\Dotenv\Exception\PathException
      */
-    public function setPath(string $path): void
+    public function setPath(string $path): static
     {
         if (isset($this->path)) {
             throw PathException::alreadySet();
@@ -58,6 +63,18 @@ final class Dotenv
         if (\strlen(\trim($path))) {
             $this->path = \trim($path);
         }
+
+        return $this;
+    }
+
+    /**
+     * A setter method.
+     */
+    public function setOverwrite(bool $overwrite): static
+    {
+        $this->overwrite = $overwrite;
+
+        return $this;
     }
 
     /**
@@ -138,7 +155,7 @@ final class Dotenv
     public function writeVars(array $vars): void
     {
         foreach ($vars as $varName => $varVal) {
-            if (!isset($_ENV[$varName]) || $this->allowEnvOverwrite()) {
+            if (!isset($_ENV[$varName]) || $this->overwrite) {
                 $_ENV[$varName] = $varVal;
             }
         }
@@ -199,18 +216,10 @@ final class Dotenv
     {
         $appEnv = $_ENV[$this->appEnvName] ?? '';
 
-        if (($appEnv === '' || $this->allowEnvOverwrite()) && isset($vars[$this->appEnvName])) {
+        if (($appEnv === '' || $this->overwrite) && isset($vars[$this->appEnvName])) {
             $appEnv = $vars[$this->appEnvName];
         }
 
         return \strval($appEnv);
-    }
-
-    /**
-     * Check if it is allowed to overwrite external envritonment variables.
-     */
-    private function allowEnvOverwrite(): bool
-    {
-        return false;
     }
 }

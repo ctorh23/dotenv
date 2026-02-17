@@ -104,7 +104,7 @@ final class DotenvTest extends TestCase
         $this->assertEquals($arrExpected, $vars);
     }
 
-    public function testWriteVarsNoOverwrite(): void
+    public function testWriteVarsOverwriteDisabled(): void
     {
         $_ENV['AWS_ACCESS_KEY_ID'] = 'acme';
         $_ENV['AWS_SECRET_ACCESS_KEY'] = 'verySecretPhrase';
@@ -115,8 +115,28 @@ final class DotenvTest extends TestCase
 
         ];
 
-        $sut = new DotEnv();
-        $sut->writeVars($vars);
+        (new DotEnv())
+            ->writeVars($vars);
+        $this->assertArrayHasKey('AWS_DEFAULT_REGION', $_ENV);
+        $this->assertArrayHasKey('AWS_SECRET_ACCESS_KEY', $_ENV);
+        $this->assertEquals($_ENV['AWS_DEFAULT_REGION'], 'eu-west-1');
+        $this->assertEquals($_ENV['AWS_SECRET_ACCESS_KEY'], 'verySecretPhrase');
+    }
+
+    public function testWriteVarsOverwriteEnabled(): void
+    {
+        $_ENV['AWS_ACCESS_KEY_ID'] = 'acme';
+        $_ENV['AWS_SECRET_ACCESS_KEY'] = 'shouldNotBeUsed';
+
+        $vars = [
+            'AWS_SECRET_ACCESS_KEY' => 'verySecretPhrase',
+            'AWS_DEFAULT_REGION' => 'eu-west-1',
+
+        ];
+
+        (new DotEnv())
+            ->setOverwrite(true)
+            ->writeVars($vars);
         $this->assertArrayHasKey('AWS_DEFAULT_REGION', $_ENV);
         $this->assertArrayHasKey('AWS_SECRET_ACCESS_KEY', $_ENV);
         $this->assertEquals($_ENV['AWS_DEFAULT_REGION'], 'eu-west-1');
