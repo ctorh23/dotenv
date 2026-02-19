@@ -80,7 +80,7 @@ final class Dotenv
     public function setAppEnvName(string $appEnvName): self
     {
         if (!$this->validateVarName($appEnvName)) {
-            throw SyntaxException::wrongVariableName($appEnvName);
+            throw SyntaxException::wrongName($appEnvName);
         }
 
         $this->appEnvName = $appEnvName;
@@ -159,7 +159,7 @@ final class Dotenv
         if (\is_array($lines)) {
             foreach ($lines as $ln) {
                 if (!\preg_match(self::VAR_PATTERN, $ln, $matches) || \count($matches) < 3) {
-                    throw SyntaxException::incorrectVarDefinition($ln);
+                    throw SyntaxException::wrongDefinition($ln);
                 }
                 $vars[$matches[1]] = $matches[2];
             }

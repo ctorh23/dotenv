@@ -9,19 +9,19 @@ namespace Ctorh23\Dotenv\Exception;
  *
  * @author Stoyan Dimitrov
  */
-class SyntaxException extends \RuntimeException implements ExceptionInterface
+final class SyntaxException extends \DomainException implements ExceptionInterface
 {
     public function __construct(string $msg, int $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct($msg, $code, $previous);
     }
 
-    public static function incorrectVarDefinition(string $envFileLine): self
+    public static function wrongDefinition(string $envFileLine): self
     {
         return new self(sprintf('The environment variable is not defined correctly "%s"!', $envFileLine));
     }
 
-    public static function wrongVariableName(string $varName): self
+    public static function wrongName(string $varName): self
     {
         return new self(sprintf('Not valid environment variable name "%s"!', $varName));
     }

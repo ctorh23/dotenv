@@ -9,7 +9,7 @@ namespace Ctorh23\Dotenv\Exception;
  *
  * @author Stoyan Dimitrov
  */
-class PathException extends \RuntimeException implements ExceptionInterface
+final class PathException extends \RuntimeException implements ExceptionInterface
 {
     public function __construct(string $msg, int $code = 0, ?\Throwable $previous = null)
     {
