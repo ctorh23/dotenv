@@ -12,7 +12,7 @@ use Ctorh23\Dotenv\Exception\EnvVarException;
  *
  * @author Stoyan Dimitrov
  */
-final class Dotenv
+final class Dotenv implements DotenvInterface
 {
     /**
      * The regex pattern for each line in .env file.
