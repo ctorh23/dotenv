@@ -6,7 +6,7 @@ namespace Ctorh23\Dotenv\Tests;
 
 use Ctorh23\Dotenv\Dotenv;
 use Ctorh23\Dotenv\Exception\PathException;
-use Ctorh23\Dotenv\Exception\SyntaxException;
+use Ctorh23\Dotenv\Exception\EnvVarException;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -45,7 +45,7 @@ final class DotenvTest extends TestCase
     public function testProcessFileWithWrongDefinition(): void
     {
         $sut = new DotEnv();
-        $this->expectException(SyntaxException::class);
+        $this->expectException(EnvVarException::class);
         $sut->processFile(\FIXTURES_PATH . '/envfiles/.wrong-syntax');
     }
 
@@ -147,7 +147,7 @@ final class DotenvTest extends TestCase
     public function testSetAppEnvNameNotValidRisesException(string $varName): void
     {
         $sut = new DotEnv();
-        $this->expectException(SyntaxException::class);
+        $this->expectException(EnvVarException::class);
         $sut->setAppEnvName($varName);
     }
 

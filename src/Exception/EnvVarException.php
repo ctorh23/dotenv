@@ -9,7 +9,7 @@ namespace Ctorh23\Dotenv\Exception;
  *
  * @author Stoyan Dimitrov
  */
-final class SyntaxException extends \DomainException implements ExceptionInterface
+final class EnvVarException extends \DomainException implements ExceptionInterface
 {
     public function __construct(string $msg, int $code = 0, ?\Throwable $previous = null)
     {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ctorh23\Dotenv;
 
 use Ctorh23\Dotenv\Exception\PathException;
-use Ctorh23\Dotenv\Exception\SyntaxException;
+use Ctorh23\Dotenv\Exception\EnvVarException;
 
 /**
  * Processing environment variables in .env files.
@@ -75,12 +75,12 @@ final class Dotenv
     /**
      * A setter method.
      *
-     * @throws \Ctorh23\Dotenv\Exception\SyntaxException
+     * @throws \Ctorh23\Dotenv\Exception\EnvVarException
      */
     public function setAppEnvName(string $appEnvName): self
     {
         if (!$this->validateVarName($appEnvName)) {
-            throw SyntaxException::wrongName($appEnvName);
+            throw EnvVarException::wrongName($appEnvName);
         }
 
         $this->appEnvName = $appEnvName;
@@ -120,7 +120,7 @@ final class Dotenv
     /**
      * Passes each item of a $fileList parameter to the .env parser and merges results.
      *
-     * @throws \Ctorh23\Dotenv\Exception\SyntaxException
+     * @throws \Ctorh23\Dotenv\Exception\EnvVarException
      * @throws \Ctorh23\Dotenv\Exception\PathException
      *
      * @param array<string> $fileList
@@ -143,7 +143,7 @@ final class Dotenv
     /**
      * This parses .env files
      *
-     * @throws \Ctorh23\Dotenv\Exception\SyntaxException
+     * @throws \Ctorh23\Dotenv\Exception\EnvVarException
      * @throws \Ctorh23\Dotenv\Exception\PathException
      *
      * @return array<string, string>
@@ -159,7 +159,7 @@ final class Dotenv
         if (\is_array($lines)) {
             foreach ($lines as $ln) {
                 if (!\preg_match(self::VAR_PATTERN, $ln, $matches) || \count($matches) < 3) {
-                    throw SyntaxException::wrongDefinition($ln);
+                    throw EnvVarException::wrongDefinition($ln);
                 }
                 $vars[$matches[1]] = $matches[2];
             }
