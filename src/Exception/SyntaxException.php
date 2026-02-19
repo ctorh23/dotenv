@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ctorh23\Dotenv\Exception;
 
 /**
- * Thrown when a file or directory does not exist or is not accessible.
+ * Thrown when an environment variable name or value does not match the required syntax.
  *
  * @author Stoyan Dimitrov
  */
@@ -19,5 +19,10 @@ class SyntaxException extends \RuntimeException implements ExceptionInterface
     public static function incorrectVarDefinition(string $envFileLine): self
     {
         return new self(sprintf('The environment variable is not defined correctly "%s"!', $envFileLine));
+    }
+
+    public static function wrongVariableName(string $varName): self
+    {
+        return new self(sprintf('Not valid environment variable name "%s"!', $varName));
     }
 }

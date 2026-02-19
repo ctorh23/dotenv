@@ -142,4 +142,21 @@ final class DotenvTest extends TestCase
         $this->assertEquals($_ENV['AWS_DEFAULT_REGION'], 'eu-west-1');
         $this->assertEquals($_ENV['AWS_SECRET_ACCESS_KEY'], 'verySecretPhrase');
     }
+
+    #[DataProvider('wrongVarName')]
+    public function testSetAppEnvNameNotValidRisesException(string $varName): void
+    {
+        $sut = new DotEnv();
+        $this->expectException(SyntaxException::class);
+        $sut->setAppEnvName($varName);
+    }
+
+    public static function wrongVarName(): array
+    {
+        return [
+            ['1st_ENV'],
+            ['App-Env'],
+            ['AppEnv!'],
+        ];
+    }
 }

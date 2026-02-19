@@ -20,6 +20,11 @@ final class Dotenv
     private const VAR_PATTERN = '/^([a-zA-Z_][a-zA-Z0-9_]+)=([^\'\"\`\r\n\t\f\v\s]+)$/';
 
     /**
+     * The regex pattern for a variable name.
+     */
+    private const VAR_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]+$/';
+
+    /**
      * The path to the directory containing .env files or the file itself.
      */
     private string $path;
@@ -54,7 +59,7 @@ final class Dotenv
      *
      * @throws \Ctorh23\Dotenv\Exception\PathException
      */
-    public function setPath(string $path): static
+    public function setPath(string $path): self
     {
         if (isset($this->path)) {
             throw PathException::alreadySet();
@@ -69,8 +74,24 @@ final class Dotenv
 
     /**
      * A setter method.
+     *
+     * @throws \Ctorh23\Dotenv\Exception\SyntaxException
      */
-    public function setOverwrite(bool $overwrite): static
+    public function setAppEnvName(string $appEnvName): self
+    {
+        if (!$this->validateVarName($appEnvName)) {
+            throw SyntaxException::wrongVariableName($appEnvName);
+        }
+
+        $this->appEnvName = $appEnvName;
+
+        return $this;
+    }
+
+    /**
+     * A setter method.
+     */
+    public function setOverwrite(bool $overwrite): self
     {
         $this->overwrite = $overwrite;
 
@@ -159,6 +180,14 @@ final class Dotenv
                 $_ENV[$varName] = $varVal;
             }
         }
+    }
+
+    /**
+     * Validator for an environment variable name.
+     */
+    public function validateVarName(string $varName): bool
+    {
+        return \preg_match(self::VAR_NAME_PATTERN, $varName) ? true : false;
     }
 
     /**
