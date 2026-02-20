@@ -14,13 +14,13 @@ use PHPUnit\Framework\Attributes\BackupGlobals;
 final class DotenvTest extends TestCase
 {
     /**
-     * @covers DotEnv::load()
-     * @covers DotEnv::examinePath()
+     * @covers Dotenv::load()
+     * @covers Dotenv::examinePath()
      */
     #[DataProvider('provideWrongPath')]
     public function testWrongPathRisesException(string $path): void
     {
-        $sut = new DotEnv($path);
+        $sut = new Dotenv($path);
         $this->expectException(PathException::class);
         $sut->load();
     }
@@ -34,31 +34,31 @@ final class DotenvTest extends TestCase
     }
 
     /**
-     * @covers DotEnv::processFile()
+     * @covers Dotenv::processFile()
      */
     public function testProcessFileWithNoFile(): void
     {
-        $sut = new DotEnv();
+        $sut = new Dotenv();
         $this->expectException(PathException::class);
         $sut->processFile(\FIXTURES_PATH);
     }
 
     /**
-     * @covers DotEnv::processFile()
+     * @covers Dotenv::processFile()
      */
     public function testProcessFileWithWrongDefinition(): void
     {
-        $sut = new DotEnv();
+        $sut = new Dotenv();
         $this->expectException(EnvVarException::class);
         $sut->processFile(\FIXTURES_PATH . '/envfiles/.wrong-syntax');
     }
 
     /**
-     * @covers DotEnv::processFile()
+     * @covers Dotenv::processFile()
      */
     public function testProcessFileWithCorrectDefinition(): void
     {
-        $sut = new DotEnv();
+        $sut = new Dotenv();
         $vars = $sut->processFile(\FIXTURES_PATH . '/envfiles/.correct-syntax');
 
         $arrExpected = [
@@ -71,11 +71,11 @@ final class DotenvTest extends TestCase
     }
 
     /**
-     * @covers DotEnv::processFileList()
+     * @covers Dotenv::processFileList()
      */
     public function testProcessFileListDifferentVars(): void
     {
-        $sut = new DotEnv();
+        $sut = new Dotenv();
         $fileList = [
             \FIXTURES_PATH . '/envfiles/.env-list-base',
             \FIXTURES_PATH . '/envfiles/.env-list-different',
@@ -95,11 +95,11 @@ final class DotenvTest extends TestCase
     }
 
     /**
-     * @covers DotEnv::processFileList()
+     * @covers Dotenv::processFileList()
      */
     public function testProcessFileListOverlapVars(): void
     {
-        $sut = new DotEnv();
+        $sut = new Dotenv();
         $fileList = [
             \FIXTURES_PATH . '/envfiles/.env-list-base',
             \FIXTURES_PATH . '/envfiles/.env-list-overlap',
@@ -118,7 +118,7 @@ final class DotenvTest extends TestCase
     }
 
     /**
-     * @covers DotEnv::writeVars()
+     * @covers Dotenv::writeVars()
      */
     #[BackupGlobals(true)]
     public function testWriteVarsOverwriteDisabled(): void
@@ -132,7 +132,7 @@ final class DotenvTest extends TestCase
 
         ];
 
-        (new DotEnv())
+        (new Dotenv())
             ->writeVars($vars);
         $this->assertArrayHasKey('AWS_DEFAULT_REGION', $_ENV);
         $this->assertArrayHasKey('AWS_SECRET_ACCESS_KEY', $_ENV);
@@ -141,8 +141,8 @@ final class DotenvTest extends TestCase
     }
 
     /**
-     * @covers DotEnv::setOverwrite()
-     * @covers DotEnv::writeVars()
+     * @covers Dotenv::setOverwrite()
+     * @covers Dotenv::writeVars()
      */
     #[BackupGlobals(true)]
     public function testWriteVarsOverwriteEnabled(): void
@@ -156,7 +156,7 @@ final class DotenvTest extends TestCase
 
         ];
 
-        (new DotEnv())
+        (new Dotenv())
             ->setOverwrite(true)
             ->writeVars($vars);
         $this->assertArrayHasKey('AWS_DEFAULT_REGION', $_ENV);
@@ -166,13 +166,13 @@ final class DotenvTest extends TestCase
     }
 
     /**
-     * @covers DotEnv::setAppEnvName()
-     * @covers DotEnv::validateVarName()
+     * @covers Dotenv::setAppEnvName()
+     * @covers Dotenv::validateVarName()
      */
     #[DataProvider('provideWrongVarName')]
     public function testSetAppEnvNameNotValidRisesException(string $varName): void
     {
-        $sut = new DotEnv();
+        $sut = new Dotenv();
         $this->expectException(EnvVarException::class);
         $sut->setAppEnvName($varName);
     }
@@ -187,16 +187,16 @@ final class DotenvTest extends TestCase
     }
 
     /**
-     * @covers DotEnv::load()
-     * @covers DotEnv::examinePath()
-     * @covers DotEnv::prepareFileList()
-     * @covers DotEnv::fetchAppEnv()
+     * @covers Dotenv::load()
+     * @covers Dotenv::examinePath()
+     * @covers Dotenv::prepareFileList()
+     * @covers Dotenv::fetchAppEnv()
      */
     #[DataProvider('provideEnvFilesDefaultAppEnvName')]
     #[BackupGlobals(true)]
     public function testLoadSuccessWithDefaultAppEnvName(string $path): void
     {
-        (new DotEnv(\FIXTURES_PATH . '/' . $path))
+        (new Dotenv(\FIXTURES_PATH . '/' . $path))
             ->load();
 
         $this->assertArrayHasKey('DB_HOST', $_ENV);
@@ -222,17 +222,17 @@ final class DotenvTest extends TestCase
     }
 
     /**
-     * @covers DotEnv::setPath()
-     * @covers DotEnv::setAppEnvName()
-     * @covers DotEnv::load()
-     * @covers DotEnv::examinePath()
-     * @covers DotEnv::prepareFileList()
-     * @covers DotEnv::fetchAppEnv()
+     * @covers Dotenv::setPath()
+     * @covers Dotenv::setAppEnvName()
+     * @covers Dotenv::load()
+     * @covers Dotenv::examinePath()
+     * @covers Dotenv::prepareFileList()
+     * @covers Dotenv::fetchAppEnv()
      */
     #[BackupGlobals(true)]
     public function testLoadSuccessWithCustomAppEnvName(): void
     {
-        (new DotEnv())
+        (new Dotenv())
             ->setPath(\FIXTURES_PATH . '/env_and_envlocal_and_spec_and_speclocal')
             ->setAppEnvName('APPLICATION_ENVIRONMENT')
             ->load();
