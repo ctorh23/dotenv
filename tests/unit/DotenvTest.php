@@ -29,13 +29,6 @@ final class DotenvTest extends TestCase
         ];
     }
 
-    public function testSetingPathManyTimes(): void
-    {
-        $sut = new DotEnv('/dummy/path');
-        $this->expectException(PathException::class);
-        $sut->setPath('/new/path');
-    }
-
     public function testProcessFileWithNoFile(): void
     {
         $sut = new DotEnv();

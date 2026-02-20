@@ -55,16 +55,10 @@ final class Dotenv implements DotenvInterface
     }
 
     /**
-     * A setter method. The path can be set only once.
-     *
-     * @throws \Ctorh23\Dotenv\Exception\PathException
+     * A setter method.
      */
     public function setPath(string $path): self
     {
-        if (isset($this->path)) {
-            throw PathException::alreadySet();
-        }
-
         if (\strlen(\trim($path))) {
             $this->path = \trim($path);
         }

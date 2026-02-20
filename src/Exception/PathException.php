@@ -25,9 +25,4 @@ final class PathException extends \RuntimeException implements ExceptionInterfac
     {
         return new self('Path not set!');
     }
-
-    public static function alreadySet(): self
-    {
-        return new self('Path can not be overwritten one set!');
-    }
 }
