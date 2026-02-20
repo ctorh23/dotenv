@@ -13,6 +13,10 @@ use PHPUnit\Framework\Attributes\BackupGlobals;
 
 final class DotenvTest extends TestCase
 {
+    /**
+     * @covers DotEnv::load()
+     * @covers DotEnv::examinePath()
+     */
     #[DataProvider('provideWrongPath')]
     public function testWrongPathRisesException(string $path): void
     {
@@ -29,6 +33,9 @@ final class DotenvTest extends TestCase
         ];
     }
 
+    /**
+     * @covers DotEnv::processFile()
+     */
     public function testProcessFileWithNoFile(): void
     {
         $sut = new DotEnv();
@@ -36,6 +43,9 @@ final class DotenvTest extends TestCase
         $sut->processFile(\FIXTURES_PATH);
     }
 
+    /**
+     * @covers DotEnv::processFile()
+     */
     public function testProcessFileWithWrongDefinition(): void
     {
         $sut = new DotEnv();
@@ -43,6 +53,9 @@ final class DotenvTest extends TestCase
         $sut->processFile(\FIXTURES_PATH . '/envfiles/.wrong-syntax');
     }
 
+    /**
+     * @covers DotEnv::processFile()
+     */
     public function testProcessFileWithCorrectDefinition(): void
     {
         $sut = new DotEnv();
@@ -57,6 +70,9 @@ final class DotenvTest extends TestCase
         $this->assertEquals($arrExpected, $vars);
     }
 
+    /**
+     * @covers DotEnv::processFileList()
+     */
     public function testProcessFileListDifferentVars(): void
     {
         $sut = new DotEnv();
@@ -78,6 +94,9 @@ final class DotenvTest extends TestCase
         $this->assertEquals($arrExpected, $vars);
     }
 
+    /**
+     * @covers DotEnv::processFileList()
+     */
     public function testProcessFileListOverlapVars(): void
     {
         $sut = new DotEnv();
@@ -98,6 +117,9 @@ final class DotenvTest extends TestCase
         $this->assertEquals($arrExpected, $vars);
     }
 
+    /**
+     * @covers DotEnv::writeVars()
+     */
     #[BackupGlobals(true)]
     public function testWriteVarsOverwriteDisabled(): void
     {
@@ -118,6 +140,10 @@ final class DotenvTest extends TestCase
         $this->assertEquals($_ENV['AWS_SECRET_ACCESS_KEY'], 'verySecretPhrase');
     }
 
+    /**
+     * @covers DotEnv::setOverwrite()
+     * @covers DotEnv::writeVars()
+     */
     #[BackupGlobals(true)]
     public function testWriteVarsOverwriteEnabled(): void
     {
@@ -139,6 +165,10 @@ final class DotenvTest extends TestCase
         $this->assertEquals($_ENV['AWS_SECRET_ACCESS_KEY'], 'verySecretPhrase');
     }
 
+    /**
+     * @covers DotEnv::setAppEnvName()
+     * @covers DotEnv::validateVarName()
+     */
     #[DataProvider('provideWrongVarName')]
     public function testSetAppEnvNameNotValidRisesException(string $varName): void
     {
@@ -156,6 +186,12 @@ final class DotenvTest extends TestCase
         ];
     }
 
+    /**
+     * @covers DotEnv::load()
+     * @covers DotEnv::examinePath()
+     * @covers DotEnv::prepareFileList()
+     * @covers DotEnv::fetchAppEnv()
+     */
     #[DataProvider('provideEnvFilesDefaultAppEnvName')]
     #[BackupGlobals(true)]
     public function testLoadSuccessWithDefaultAppEnvName(string $path): void
@@ -185,10 +221,19 @@ final class DotenvTest extends TestCase
         ];
     }
 
+    /**
+     * @covers DotEnv::setPath()
+     * @covers DotEnv::setAppEnvName()
+     * @covers DotEnv::load()
+     * @covers DotEnv::examinePath()
+     * @covers DotEnv::prepareFileList()
+     * @covers DotEnv::fetchAppEnv()
+     */
     #[BackupGlobals(true)]
     public function testLoadSuccessWithCustomAppEnvName(): void
     {
-        (new DotEnv(\FIXTURES_PATH . '/env_and_envlocal_and_spec_and_speclocal'))
+        (new DotEnv())
+            ->setPath(\FIXTURES_PATH . '/env_and_envlocal_and_spec_and_speclocal')
             ->setAppEnvName('APPLICATION_ENVIRONMENT')
             ->load();
 
