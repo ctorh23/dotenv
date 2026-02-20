@@ -223,8 +223,8 @@ final class Dotenv implements DotenvInterface
         $fileList = [];
 
         $files = [
-            $this->envDir . $this->envFile . $envName,
-            $this->envDir . $this->envFile . $envName . '.local',
+            $this->envDir . $this->envFile . ($envName ? '-' . $envName : ''),
+            $this->envDir . $this->envFile . ($envName ? '-' . $envName : '') . '.local',
         ];
 
         foreach ($files as $f) {

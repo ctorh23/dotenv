@@ -9,10 +9,11 @@ use Ctorh23\Dotenv\Exception\PathException;
 use Ctorh23\Dotenv\Exception\EnvVarException;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\BackupGlobals;
 
 final class DotenvTest extends TestCase
 {
-    #[DataProvider('wrongPathProvider')]
+    #[DataProvider('provideWrongPath')]
     public function testWrongPathRisesException(string $path): void
     {
         $sut = new DotEnv($path);
@@ -20,7 +21,7 @@ final class DotenvTest extends TestCase
         $sut->load();
     }
 
-    public static function wrongPathProvider(): array
+    public static function provideWrongPath(): array
     {
         return [
             ['/not/existing'],
@@ -104,6 +105,7 @@ final class DotenvTest extends TestCase
         $this->assertEquals($arrExpected, $vars);
     }
 
+    #[BackupGlobals(true)]
     public function testWriteVarsOverwriteDisabled(): void
     {
         $_ENV['AWS_ACCESS_KEY_ID'] = 'acme';
@@ -123,6 +125,7 @@ final class DotenvTest extends TestCase
         $this->assertEquals($_ENV['AWS_SECRET_ACCESS_KEY'], 'verySecretPhrase');
     }
 
+    #[BackupGlobals(true)]
     public function testWriteVarsOverwriteEnabled(): void
     {
         $_ENV['AWS_ACCESS_KEY_ID'] = 'acme';
@@ -143,7 +146,7 @@ final class DotenvTest extends TestCase
         $this->assertEquals($_ENV['AWS_SECRET_ACCESS_KEY'], 'verySecretPhrase');
     }
 
-    #[DataProvider('wrongVarName')]
+    #[DataProvider('provideWrongVarName')]
     public function testSetAppEnvNameNotValidRisesException(string $varName): void
     {
         $sut = new DotEnv();
@@ -151,12 +154,58 @@ final class DotenvTest extends TestCase
         $sut->setAppEnvName($varName);
     }
 
-    public static function wrongVarName(): array
+    public static function provideWrongVarName(): array
     {
         return [
             ['1st_ENV'],
             ['App-Env'],
             ['AppEnv!'],
         ];
+    }
+
+    #[DataProvider('provideEnvFilesDefaultAppEnvName')]
+    #[BackupGlobals(true)]
+    public function testLoadSuccessWithDefaultAppEnvName(string $path): void
+    {
+        (new DotEnv(\FIXTURES_PATH . '/' . $path))
+            ->load();
+
+        $this->assertArrayHasKey('DB_HOST', $_ENV);
+        $this->assertArrayHasKey('DB_PORT', $_ENV);
+        $this->assertArrayHasKey('DB_USER', $_ENV);
+        $this->assertArrayHasKey('DB_PASS', $_ENV);
+        $this->assertEquals($_ENV['DB_HOST'], 'example.host');
+        $this->assertEquals($_ENV['DB_PORT'], '3306');
+        $this->assertEquals($_ENV['DB_USER'], 'appdb_user');
+        $this->assertEquals($_ENV['DB_PASS'], 'appdb-pass');
+    }
+
+    public static function provideEnvFilesDefaultAppEnvName(): array
+    {
+        return [
+            ['env_only'],
+            ['envlocal_only'],
+            ['env_and_envlocal'],
+            ['env_and_envlocal_and_spec_and_speclocal'],
+            ['env_and_envlocal_and_not-matching-spec'],
+            ['custom_filename/my-app.vars'],
+        ];
+    }
+
+    #[BackupGlobals(true)]
+    public function testLoadSuccessWithCustomAppEnvName(): void
+    {
+        (new DotEnv(\FIXTURES_PATH . '/env_and_envlocal_and_spec_and_speclocal'))
+            ->setAppEnvName('APPLICATION_ENVIRONMENT')
+            ->load();
+
+        $this->assertArrayHasKey('DB_HOST', $_ENV);
+        $this->assertArrayHasKey('DB_PORT', $_ENV);
+        $this->assertArrayHasKey('DB_USER', $_ENV);
+        $this->assertArrayHasKey('DB_PASS', $_ENV);
+        $this->assertEquals($_ENV['DB_HOST'], 'example.host');
+        $this->assertEquals($_ENV['DB_PORT'], '3306');
+        $this->assertEquals($_ENV['DB_USER'], 'appdb_admin');
+        $this->assertEquals($_ENV['DB_PASS'], 'appdb-password');
     }
 }
