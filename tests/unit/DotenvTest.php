@@ -45,6 +45,8 @@ final class DotenvTest extends TestCase
 
     /**
      * @covers Dotenv::processFile()
+     * @covers Dotenv::validateVarName()
+     * @covers Dotenv::validateVarValue()
      */
     public function testProcessFileWithWrongDefinition(): void
     {
@@ -55,6 +57,8 @@ final class DotenvTest extends TestCase
 
     /**
      * @covers Dotenv::processFile()
+     * @covers Dotenv::validateVarName()
+     * @covers Dotenv::validateVarValue()
      */
     public function testProcessFileWithCorrectDefinition(): void
     {
@@ -63,8 +67,10 @@ final class DotenvTest extends TestCase
 
         $arrExpected = [
             'varOne' => 'First',
-            'var2' => 'Second',
-            'varThree' => '3rd',
+            'var2' => '',
+            'VarThree' => '3rd',
+            '_var4' => '"test "',
+            'var5' => '!@#$%^&*()_+=-`~.,\'"?<>/|\\',
         ];
 
         $this->assertEquals($arrExpected, $vars);
@@ -169,7 +175,7 @@ final class DotenvTest extends TestCase
      * @covers Dotenv::setAppEnvName()
      * @covers Dotenv::validateVarName()
      */
-    #[DataProvider('provideWrongVarName')]
+    #[DataProvider('provideWrongEnvVarName')]
     public function testSetAppEnvNameNotValidRisesException(string $varName): void
     {
         $sut = new Dotenv();
@@ -177,7 +183,7 @@ final class DotenvTest extends TestCase
         $sut->setAppEnvName($varName);
     }
 
-    public static function provideWrongVarName(): array
+    public static function provideWrongEnvVarName(): array
     {
         return [
             ['1st_ENV'],

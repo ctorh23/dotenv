@@ -1,4 +1,8 @@
 varOne=First
-var2=Second
-varThree=3rd
 
+var2=
+#comment
+VarThree=3rd
+
+_var4 = "test "
+var5=!@#$%^&*()_+=-`~.,'"?<>/|\

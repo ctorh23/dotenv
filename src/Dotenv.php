@@ -15,14 +15,14 @@ use Ctorh23\Dotenv\Exception\EnvVarException;
 final class Dotenv implements DotenvInterface
 {
     /**
-     * The regex pattern for each line in .env file.
-     */
-    private const VAR_PATTERN = '/^([a-zA-Z_][a-zA-Z0-9_]+)=([^\'\"\`\r\n\t\f\v\s]+)$/';
-
-    /**
      * The regex pattern for a variable name.
      */
-    private const VAR_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]+$/';
+    private const VAR_NAME_REGEX = '/^[a-zA-Z_][a-zA-Z0-9_]+$/';
+
+    /**
+     * The regex pattern for a variable value.
+     */
+    private const VAR_VALUE_REGEX = '/^(?:(?<=[\\\\])[\a\b\r\n\t\f\v\e\0]|[^\a\b\r\n\t\f\v\e\0])+$/';
 
     /**
      * The path to the directory containing .env files or the file itself.
@@ -152,10 +152,27 @@ final class Dotenv implements DotenvInterface
         $lines = \file($file, \FILE_IGNORE_NEW_LINES | \FILE_SKIP_EMPTY_LINES);
         if (\is_array($lines)) {
             foreach ($lines as $ln) {
-                if (!\preg_match(self::VAR_PATTERN, $ln, $matches) || \count($matches) < 3) {
+                if (\substr($ln, 0, 1) === '#') {
+                    continue;
+                }
+
+                if (!\str_contains($ln, '=')) {
                     throw EnvVarException::wrongDefinition($ln);
                 }
-                $vars[$matches[1]] = $matches[2];
+
+                [$varName, $varVal] = \explode('=', $ln, 2);
+                $varName = \trim($varName);
+                $varVal = \trim($varVal);
+
+                if (!$this->validateVarName($varName)) {
+                    throw EnvVarException::wrongName($varName);
+                }
+
+                if (!$this->validateVarValue($varVal)) {
+                    throw EnvVarException::wrongValue($varVal);
+                }
+
+                $vars[$varName] = $varVal;
             }
         }
 
@@ -177,11 +194,19 @@ final class Dotenv implements DotenvInterface
     }
 
     /**
-     * Validator for an environment variable name.
+     * A validator for an environment variable name.
      */
-    public function validateVarName(string $varName): bool
+    private function validateVarName(string $varName): bool
     {
-        return \preg_match(self::VAR_NAME_PATTERN, $varName) ? true : false;
+        return \preg_match(self::VAR_NAME_REGEX, $varName) ? true : false;
+    }
+
+    /**
+     * A validator for an environment variable value.
+     */
+    private function validateVarValue(string $varVal): bool
+    {
+        return !\strlen($varVal) || \preg_match(self::VAR_VALUE_REGEX, $varVal) ? true : false;
     }
 
     /**
