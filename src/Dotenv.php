@@ -188,9 +188,17 @@ final class Dotenv implements DotenvInterface
     {
         foreach ($vars as $varName => $varVal) {
             if (!isset($_ENV[$varName]) || $this->overwrite) {
-                $_ENV[$varName] = $varVal;
+                $_ENV[$varName] = \strval($varVal);
             }
         }
+    }
+
+    /**
+     * Returns a value of an environment varialbe or empty string if it doesn't exist.
+     */
+    public static function getVar(string $varName): string
+    {
+        return \strval($_ENV[$varName] ?? '');
     }
 
     /**

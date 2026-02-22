@@ -65,4 +65,9 @@ interface DotenvInterface
      * @param array<string, string> $vars
      */
     public function writeVars(array $vars): void;
+
+    /**
+     * Returns a value of an environment varialbe or empty string if it doesn't exist.
+     */
+    public static function getVar(string $varName): string;
 }

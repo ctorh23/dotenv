@@ -71,6 +71,7 @@ final class DotenvTest extends TestCase
             'VarThree' => '3rd',
             '_var4' => '"test "',
             'var5' => '!@#$%^&*()_+=-`~.,\'"?<>/|\\',
+            'var_digit' => '3',
         ];
 
         $this->assertEquals($arrExpected, $vars);
@@ -251,5 +252,17 @@ final class DotenvTest extends TestCase
         $this->assertEquals($_ENV['DB_PORT'], '3306');
         $this->assertEquals($_ENV['DB_USER'], 'appdb_admin');
         $this->assertEquals($_ENV['DB_PASS'], 'appdb-password');
+    }
+
+    /**
+     * @covers Dotenv::getVar()
+     */
+    #[BackupGlobals(true)]
+    public function testGetVar(): void
+    {
+        (new Dotenv())
+            ->writeVars(['my_var' => 1]);
+        $this->assertSame(Dotenv::getVar('my_var'), '1');
+        $this->assertSame(Dotenv::getVar('no_var'), '');
     }
 }
