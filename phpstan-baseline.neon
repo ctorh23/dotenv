@@ -1,12 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Comparison operation "\<" between 3 and 3 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Dotenv.php
-
-		-
 			message: '#^Parameter \#1 \$value of function strval expects bool\|float\|int\|resource\|string\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
