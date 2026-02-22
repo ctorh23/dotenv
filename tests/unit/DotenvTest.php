@@ -256,6 +256,7 @@ final class DotenvTest extends TestCase
 
     /**
      * @covers Dotenv::getVar()
+     * @covers Dotenv::writeVars()
      */
     #[BackupGlobals(true)]
     public function testGetVar(): void
