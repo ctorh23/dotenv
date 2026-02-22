@@ -65,9 +65,4 @@ interface DotenvInterface
      * @param array<string, string> $vars
      */
     public function writeVars(array $vars): void;
-
-    /**
-     * Validator for an environment variable name.
-     */
-    public function validateVarName(string $varName): bool;
 }
