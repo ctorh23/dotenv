@@ -1,6 +1,6 @@
 {
     "name": "ctorh23/dotenv",
-    "description": "Loads environment variables from a .env file and makes them available through the $_ENV superglobal.",
+    "description": "Loads environment variable definitions from a file into the $_ENV superglobal.",
     "autoload": {
         "psr-4": {
             "Ctorh23\\Dotenv\\": "src/"
