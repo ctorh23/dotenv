@@ -12,7 +12,7 @@ return (new Config())
     ->setRules([
         '@auto' => true
     ])
-    ->setCacheFile(__DIR__ . '/var/cache/php-cs-fixer/.php-cs-fixer.cache')
+    ->setCacheFile(__DIR__ . '/var/build/php-cs-fixer/.php-cs-fixer.cache')
     ->setFinder(
         (new Finder())
             ->in([
