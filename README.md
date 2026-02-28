@@ -10,7 +10,6 @@
 
 `composer require ctorh23/dotenv`
 
----
 
 ## Usage
 
@@ -91,7 +90,6 @@ Then, you have to load the parsed variables into the `$_ENV` superglobal:
 $dotenv->writeVars($vars);
 ```
 
----
 
 ## Syntax of .env Files
 
