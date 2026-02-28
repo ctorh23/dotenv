@@ -1,11 +1,8 @@
 {
     "name": "ctorh23/dotenv",
+    "type": "library",
     "description": "Loads environment variable definitions from a file into the $_ENV superglobal.",
-    "autoload": {
-        "psr-4": {
-            "Ctorh23\\Dotenv\\": "src/"
-        }
-    },
+    "license": "MIT",
     "authors": [
         {
             "name": "Stoyan Dimitrov"
@@ -13,5 +10,10 @@
     ],
     "require": {
         "php": "^8.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ctorh23\\Dotenv\\": "src/"
+        }
     }
 }
