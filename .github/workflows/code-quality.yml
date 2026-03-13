@@ -1,0 +1,39 @@
+name: Code Quality Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: phive
+      
+      - name: Install PHIVE tools
+        run: |
+          phive --no-progress install --trust-gpg-keys 4AA394086372C20A,E82B2FB314E9906E,51C67305FFC2E5C0
+      
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+      
+      - name: Run PHP-CS-Fixer
+        run: tools/PHP-CS-Fixer/php-cs-fixer fix --dry-run --diff
+      
+      - name: Run PHPStan
+        run: tools/PHPStan/phpstan analyse
+      
+      - name: Run PHPUnit
+        run: tools/PHPUnit/phpunit
