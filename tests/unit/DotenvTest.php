@@ -265,5 +265,6 @@ final class DotenvTest extends TestCase
             ->writeVars(['my_var' => 1]);
         $this->assertSame(Dotenv::getVar('my_var'), '1');
         $this->assertSame(Dotenv::getVar('no_var'), '');
+        $this->assertSame(Dotenv::getVar('no_var', 'default_value'), 'default_value');
     }
 }
