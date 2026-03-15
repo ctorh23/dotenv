@@ -196,9 +196,9 @@ final class Dotenv implements DotenvInterface
     /**
      * Returns a value of an environment varialbe or empty string if it doesn't exist.
      */
-    public static function getVar(string $varName): string
+    public static function getVar(string $varName, string $default = ''): string
     {
-        return \strval($_ENV[$varName] ?? '');
+        return isset($_ENV[$varName]) ? \strval($_ENV[$varName]) : $default;
     }
 
     /**
