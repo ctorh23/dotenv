@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ctorh23\Dotenv\Exception;
 
+use function sprintf;
+
 /**
  * Thrown when a file or directory does not exist or is not accessible.
  *

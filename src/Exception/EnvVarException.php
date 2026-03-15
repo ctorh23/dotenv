@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ctorh23\Dotenv\Exception;
 
+use function sprintf;
+
 /**
  * Thrown when an environment variable name or value does not match the required syntax.
  *
